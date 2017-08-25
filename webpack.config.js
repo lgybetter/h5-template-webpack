@@ -2,7 +2,7 @@ var path = require('path')
 var SpritesmithPlugin = require('webpack-spritesmith')
 var ExtractTextPlugin = require("extract-text-webpack-plugin")
 var webpack = require('webpack')
-// var HtmlPlugin = require('html-webpack-plugin');
+var HtmlPlugin = require('html-webpack-plugin');
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -13,7 +13,7 @@ module.exports = {
   entry: resolve('/src/js/index.js'),
   output: {
     path: resolve('/public'),
-    filename: 'bundle.js'
+    filename: 'bundle.js?[hash]'
   },
   module: {
     loaders: [
@@ -82,7 +82,12 @@ module.exports = {
       spritesmithOptions: {
         algorithm: 'top-down'
       }
-    })
+    }),
+    new HtmlPlugin({
+      title: 'Gy-Cli',
+	    filename: resolve('/public/test.html'),
+      favicon: resolve('/src/assets/images/favicon.ico')
+	  }),
   ],
   devServer: {
     contentBase: './public',
