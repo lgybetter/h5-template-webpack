@@ -1,14 +1,15 @@
 var path = require('path')
+var SpritesmithPlugin = require('webpack-spritesmith')
 
 function resolve (dir) {
-  return path.join(__dirname, '..', dir)
+  return path.join(__dirname, dir)
 }
 
 module.exports = {
   devtool: 'eval-source-map',
-  entry: __dirname + '/src/js/index.js',
+  entry: resolve('/src/js/index.js'),
   output: {
-    path: __dirname + '/public',
+    path: resolve('/public'),
     filename: 'bundle.js'
   },
   module: {
@@ -36,6 +37,27 @@ module.exports = {
       }
     ]
   },
+  plugins: [
+    new SpritesmithPlugin({
+      // 目标小图标
+      src: {
+        cwd: resolve('/src/assets/images/icons'),
+        glob: '*.png'
+      },
+      // 输出雪碧图文件及样式文件
+      target: {
+          image: resolve('/public/images/sprites/sprite.png'),
+          css: resolve('/public/images/sprites/sprite.css')
+      },
+      // 样式文件中调用雪碧图地址写法
+      apiOptions: {
+          cssImageRef: './sprite.png'
+      },
+      spritesmithOptions: {
+          algorithm: 'top-down'
+      }
+    })
+  ],
   devServer: {
     contentBase: './public',
     historyApiFallback: true,
