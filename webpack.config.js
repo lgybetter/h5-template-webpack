@@ -1,7 +1,10 @@
 var path = require('path')
 var SpritesmithPlugin = require('webpack-spritesmith')
+var ExtractTextPlugin = require("extract-text-webpack-plugin")
+var webpack = require('webpack')
+// var HtmlPlugin = require('html-webpack-plugin');
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
@@ -21,12 +24,27 @@ module.exports = {
         include: [resolve('src'), resolve('test')]
       },
       {
-        test: /\.css$/,
-        loader: 'style-loader!css-loader'
-      },
-      {
-        test: /\.(scss|sass)$/,
-        loaders: ['style-loader', 'css-loader', 'sass-loader']
+        test: /\.(css|scss|sass)$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [{
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          }, {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: true
+            }
+          }, {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          }],
+          publicPath: resolve('/public')
+        })
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -38,6 +56,14 @@ module.exports = {
     ]
   },
   plugins: [
+    new ExtractTextPlugin({
+      filename: "style/[name].css?[hash]-[chunkhash]-[contenthash]-[name]",
+      disable: false,
+      allChunks: true
+    }),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true
+    }),
     new SpritesmithPlugin({
       // 目标小图标
       src: {
@@ -46,15 +72,15 @@ module.exports = {
       },
       // 输出雪碧图文件及样式文件
       target: {
-          image: resolve('/public/images/sprites/sprite.png'),
-          css: resolve('/public/images/sprites/sprite.css')
+        image: resolve('/public/images/sprites/sprite.png'),
+        css: resolve('/public/images/sprites/sprite.css')
       },
       // 样式文件中调用雪碧图地址写法
       apiOptions: {
-          cssImageRef: './sprite.png'
+        cssImageRef: './sprite.png'
       },
       spritesmithOptions: {
-          algorithm: 'top-down'
+        algorithm: 'top-down'
       }
     })
   ],
@@ -62,5 +88,5 @@ module.exports = {
     contentBase: './public',
     historyApiFallback: true,
     inline: true
-  } 
+  }
 }
