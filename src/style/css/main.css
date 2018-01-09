@@ -4,6 +4,7 @@ body {
     height: 200px;
     margin: 0;
     padding: 0;
+    background-image: url('../../assets/images/test.jpg');
 }
 
 p {

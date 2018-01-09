@@ -13,7 +13,7 @@ module.exports = {
   entry: resolve('/src/js/index.js'),
   output: {
     path: resolve('/public'),
-    filename: 'bundle.js?[hash]'
+    filename: '[hash].bundle.js'
   },
   module: {
     loaders: [
@@ -43,14 +43,15 @@ module.exports = {
               sourceMap: true
             }
           }],
-          publicPath: resolve('/public')
+          publicPath: '/'
         })
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
         query: {
-          limit: 10000
+          limit: 10000,
+          name: 'images/[hash].[name].[ext]'
         }
       }
     ]
